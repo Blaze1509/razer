@@ -7,7 +7,10 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://your-netlify-app.netlify.app"],
+  credentials: true
+}));
 
 // Razorpay instance
 const razorpay = new Razorpay({
@@ -54,6 +57,6 @@ app.post("/api/verify-payment", (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () =>
-  console.log(`Backend running on ${process.env.PORT}`)
+app.listen(process.env.PORT || 5000, () =>
+  console.log(`Backend running on ${process.env.PORT || 5000}`)
 );
