@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import ContactUs from "./pages/ContactUs";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
 
 function App() {
   const [amount, setAmount] = useState("");
-  const MIN_AMOUNT = 1; // Minimum ₹1 as per Razorpay
+  const [currentPage, setCurrentPage] = useState("home");
+  const MIN_AMOUNT = 1;
 
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -66,27 +72,53 @@ function App() {
     paymentObject.open();
   };
 
+  const renderPage = () => {
+    switch(currentPage) {
+      case "contact": return <ContactUs />;
+      case "terms": return <TermsAndConditions />;
+      case "privacy": return <PrivacyPolicy />;
+      case "refund": return <RefundPolicy />;
+      case "shipping": return <ShippingPolicy />;
+      default: return (
+        <div style={{ padding: 40 }}>
+          <h2>Razorpay Payment</h2>
+          <div style={{ marginBottom: 20 }}>
+            <label>Payment Amount (₹): </label>
+            <input
+              type="number"
+              min={MIN_AMOUNT}
+              step="0.01"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`Min ₹${MIN_AMOUNT}`}
+              style={{ marginLeft: 10, padding: 5 }}
+            />
+          </div>
+          <button onClick={payNow} disabled={!amount}>
+            Pay ₹{amount || "0"}
+          </button>
+          <p style={{ fontSize: 12, color: "#666", marginTop: 10 }}>
+            Minimum payment amount: ₹{MIN_AMOUNT}
+          </p>
+        </div>
+      );
+    }
+  };
+
   return (
-    <div style={{ padding: 40 }}>
-      <h2>Razorpay Payment</h2>
-      <div style={{ marginBottom: 20 }}>
-        <label>Payment Amount (₹): </label>
-        <input
-          type="number"
-          min={MIN_AMOUNT}
-          step="0.01"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder={`Min ₹${MIN_AMOUNT}`}
-          style={{ marginLeft: 10, padding: 5 }}
-        />
-      </div>
-      <button onClick={payNow} disabled={!amount}>
-        Pay ₹{amount || "0"}
-      </button>
-      <p style={{ fontSize: 12, color: "#666", marginTop: 10 }}>
-        Minimum payment amount: ₹{MIN_AMOUNT}
-      </p>
+    <div>
+      <nav style={{ padding: 20, borderBottom: "1px solid #ccc", marginBottom: 20 }}>
+        <button onClick={() => setCurrentPage("home")} style={{ marginRight: 10 }}>Home</button>
+        <button onClick={() => setCurrentPage("contact")} style={{ marginRight: 10 }}>Contact Us</button>
+        <button onClick={() => setCurrentPage("terms")} style={{ marginRight: 10 }}>Terms</button>
+        <button onClick={() => setCurrentPage("privacy")} style={{ marginRight: 10 }}>Privacy</button>
+        <button onClick={() => setCurrentPage("refund")} style={{ marginRight: 10 }}>Refunds</button>
+        <button onClick={() => setCurrentPage("shipping")} style={{ marginRight: 10 }}>Shipping</button>
+      </nav>
+      {renderPage()}
+      <footer style={{ padding: 20, borderTop: "1px solid #ccc", marginTop: 40, textAlign: "center" }}>
+        <p>© 2024 Your Company Name. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
